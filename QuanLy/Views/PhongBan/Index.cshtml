@@ -1,0 +1,87 @@
+﻿@model IEnumerable<QuanLy.Models.PhongBan>
+
+@{
+    ViewData["Title"] = "Danh sách Phòng Ban";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-primary">
+            <i class="bi bi-collection"></i> @ViewData["Title"]
+        </h2>
+        <a asp-action="Create" class="btn btn-success shadow-sm">
+            <i class="bi bi-plus-circle"></i> Thêm Phòng Ban
+        </a>
+    </div>
+
+    <!-- Ô tìm kiếm -->
+    <div class="mb-4">
+        <input type="text" id="searchBox" class="form-control shadow-sm" placeholder="🔍 Tìm phòng ban ...">
+    </div>
+
+    <div class="row g-4" id="phongBanContainer">
+        @{
+            int stt = 1;
+        }
+        @foreach (var item in Model)
+        {
+            <div class="col-md-4 col-sm-6 phongban-card">
+                <div class="card shadow-sm border-0 h-100 rounded-3">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="~/images/logo.png" class="rounded-circle"
+                                 style="width:50px; height:50px; object-fit:cover;" alt="PhongBan" />
+
+                            <div class="ms-3">
+                                <h5 class="card-title mb-0 fw-bold ten-phongban">@item.TenPhongBan</h5>
+                                <small class="text-muted">Mã: @item.MaPhongBan</small>
+                            </div>
+                        </div>
+
+                        <p class="card-text">
+                            <i class="bi bi-bank2"></i> <strong>Công ty:</strong>
+                            <span class="ten-congty">@item.TenCongTy</span>
+                        </p>
+                    </div>
+                    <div class="card-footer bg-light border-0 d-flex justify-content-between">
+                        <a asp-action="Edit" asp-route-id="@item.MaPhongBan" class="btn btn-sm btn-outline-warning">
+                            <i class="bi bi-pencil-square"></i> Sửa
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@item.MaPhongBan" class="btn btn-sm btn-outline-danger">
+                            <i class="bi bi-trash"></i> Xóa
+                        </a>
+                    </div>
+                </div>
+            </div>
+            stt++;
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById("searchBox").addEventListener("keyup", function () {
+            let keyword = this.value.toLowerCase();
+            let cards = document.querySelectorAll(".phongban-card");
+
+            cards.forEach(function (card) {
+                let tenPhongBan = card.querySelector(".ten-phongban").innerText.toLowerCase();
+                let tenCongTy = card.querySelector(".ten-congty").innerText.toLowerCase();
+
+                if (tenPhongBan.includes(keyword) || tenCongTy.includes(keyword)) {
+                    card.style.display = "block";
+                } else {
+                    card.style.display = "none";
+                }
+            });
+        });
+    </script>
+}
+<style>
+    .card:hover {
+        transform: translateY(-5px);
+        transition: 0.3s;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+
+</style>

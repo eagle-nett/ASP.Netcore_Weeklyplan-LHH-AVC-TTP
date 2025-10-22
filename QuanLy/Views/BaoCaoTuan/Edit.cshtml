@@ -1,0 +1,229 @@
+﻿@model QuanLy.ViewModels.BaoCaoTuanViewModel
+@{
+    ViewData["Title"] = "Chỉnh sửa báo cáo tuần";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var userAgent = Context.Request.Headers["User-Agent"].ToString();
+    bool isMobile = userAgent.Contains("Mobile") || userAgent.Contains("Android") || userAgent.Contains("iPhone");
+}
+
+<h2 class="mb-4 text-center text-primary">Chỉnh sửa báo cáo tuần</h2>
+
+<form asp-action="Edit" method="post" class="needs-validation" novalidate>
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.Id)
+    @Html.HiddenFor(m => m.NguoiBaoCaoId)
+
+    <div class="card mb-4 p-3 shadow-sm">
+        <h4 class="text-secondary mb-3">Thông tin chung</h4>
+        <div class="row mb-3">
+            <!-- Phòng ban -->
+            <div class="col-md-4">
+                <label class="form-label">🏢 Mã phòng ban</label>
+                <select asp-for="MaPhongBan" asp-items="Model.DanhSachPhongBan" class="form-select" disabled>
+                    <option value="">-- Chọn phòng ban --</option>
+                </select>
+                <input type="hidden" asp-for="MaPhongBan" />
+            </div>
+
+            <!-- Người nhận -->
+            <div class="col-md-4">
+                <label class="form-label">👨‍💼 Quản lý trực tiếp</label>
+                <select asp-for="BaoCaoChoId" asp-items="Model.DanhSachNguoiNhan" class="form-select" disabled>
+                    <option value="">-- Chọn người nhận báo cáo --</option>
+                </select>
+                <input type="hidden" asp-for="BaoCaoChoId" />
+            </div>
+
+            <!-- Tuần -->
+            <div class="col-md-3">
+                <label class="form-label">📅 Tuần báo cáo</label>
+                <select asp-for="Tuan" asp-items="Model.TuanOptions" class="form-select" disabled>
+                    <option value="">-- Chọn tuần --</option>
+                </select>
+                <input type="hidden" asp-for="Tuan" />
+            </div>
+        </div>
+        <!-- Thêm hiển thị Từ ngày / Đến ngày (readonly để người dùng không sửa nhưng vẫn POST) -->
+        <!-- Hàng 2: Từ ngày / Đến ngày (readonly để vẫn POST được) -->
+        <div class="row g-2">
+            <div class="col-md-6">
+                <label class="form-label">Từ ngày</label>
+                <input asp-for="TuNgay" type="date" class="form-control" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Đến ngày</label>
+                <input asp-for="DenNgay" type="date" class="form-control" readonly />
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <button type="submit" name="addRow" formnovalidate class="btn btn-outline-primary">
+            <i class="fas fa-plus"></i> Thêm dòng
+        </button>
+    </div>
+
+    <!-- === Server-side: chỉ render 1 layout để tránh duplicate inputs trên mobile === -->
+    @if (!isMobile)
+    {
+        <!-- Desktop: bảng -->
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-primary text-center sticky-top">
+                    <tr>
+                        <th>STT</th>
+                        <th>Mảng việc</th>
+                        <th>Nội dung</th>
+                        <th>Ngày hoàn thành</th>
+                        <th>Mục tiêu</th>
+                        <th>Tiến độ</th>
+                        <th>Ghi chú</th>
+                        <th>Chi tiết</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.NoiDungs.Count; i++)
+                    {
+                        <tr>
+                            <td class="text-center fw-bold">@((i + 1).ToString("D2"))</td>
+                            <td>
+                                <textarea asp-for="NoiDungs[@i].TrachNhiemChinh" rows="1" class="form-control"></textarea>
+                                <span asp-validation-for="NoiDungs[@i].TrachNhiemChinh" class="text-danger small"></span>
+                            </td>
+                            <td>
+                                <textarea asp-for="NoiDungs[@i].NoiDung" rows="3" class="form-control"></textarea>
+                                <span asp-validation-for="NoiDungs[@i].NoiDung" class="text-danger small"></span>
+                            </td>
+                            <td>
+                                <input asp-for="NoiDungs[@i].NgayHoanThanh" type="date" class="form-control" />
+                            </td>
+                            <td>
+                                <textarea asp-for="NoiDungs[@i].MucDoUuTien" rows="2" class="form-control"></textarea>
+                                <span asp-validation-for="NoiDungs[@i].MucDoUuTien" class="text-danger small"></span>
+                            </td>
+                            <td>
+                                <select asp-for="NoiDungs[@i].TienDo" class="form-select">
+                                    <option value="">--</option>
+                                    <option>Đã hoàn thành</option>
+                                    <option>Chưa hoàn thành</option>
+                                </select>
+                                <span asp-validation-for="NoiDungs[@i].TienDo" class="text-danger small"></span>
+                            </td>
+                            <td>
+                                <textarea asp-for="NoiDungs[@i].GhiChu" rows="2" class="form-control"></textarea>
+                            </td>
+                            <td class="text-center">
+                                <button class="btn btn-outline-secondary btn-sm" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#chiTiet_@i">
+                                    <i class="fas fa-chevron-down"></i>
+                                </button>
+                            </td>
+                            <td class="text-center">
+                                <button type="submit" name="removeRow" formnovalidate value="@i" class="btn btn-danger btn-sm">🗑</button>
+                            </td>
+                        </tr>
+
+                        <tr class="collapse bg-light" id="chiTiet_@i">
+                            <td colspan="9">
+                                <div class="row g-3">
+                                    <div class="col-md-3">
+                                        <label>Kết quả đạt được</label>
+                                        <textarea asp-for="NoiDungs[@i].KetQuaDatDuoc" rows="2" class="form-control"></textarea>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label>Người hỗ trợ</label>
+                                        <textarea asp-for="NoiDungs[@i].TrachNhiemHoTro" rows="2" class="form-control"></textarea>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label>Lý do chưa hoàn thành</label>
+                                        <textarea asp-for="NoiDungs[@i].LyDoChuaHoanThanh" rows="2" class="form-control"></textarea>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label>Hướng giải quyết</label>
+                                        <textarea asp-for="NoiDungs[@i].HuongGiaiQuyet" rows="2" class="form-control"></textarea>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <!-- Mobile: card layout (exactly the mobile format you provided) -->
+        <div>
+            @for (int i = 0; i < Model.NoiDungs.Count; i++)
+            {
+                <div class="border rounded p-3 mb-3 shadow-sm mobile-card">
+                    <div class="fw-bold mb-2 text-primary">Kế hoạch @(i + 1)</div>
+
+                    <label>Mảng việc</label>
+                    <textarea asp-for="NoiDungs[@i].TrachNhiemChinh" rows="2" class="form-control"></textarea>
+                    <span asp-validation-for="NoiDungs[@i].TrachNhiemChinh" class="text-danger small"></span>
+
+                    <label class="mt-2">Nội dung</label>
+                    <textarea asp-for="NoiDungs[@i].NoiDung" rows="4" class="form-control"></textarea>
+                    <span asp-validation-for="NoiDungs[@i].NoiDung" class="text-danger small"></span>
+
+                    <label class="mt-2">Ngày hoàn thành</label>
+                    <input asp-for="NoiDungs[@i].NgayHoanThanh" type="date" class="form-control" />
+
+                    <label class="mt-2">Mục tiêu</label>
+                    <textarea asp-for="NoiDungs[@i].MucDoUuTien" rows="2" class="form-control"></textarea>
+                    <span asp-validation-for="NoiDungs[@i].MucDoUuTien" class="text-danger small"></span>
+
+                    <label class="mt-2">Tiến độ</label>
+                    <select asp-for="NoiDungs[@i].TienDo" class="form-select">
+                        <option value="">--</option>
+                        <option>Đã hoàn thành</option>
+                        <option>Chưa hoàn thành</option>
+                    </select>
+                    <span asp-validation-for="NoiDungs[@i].TienDo" class="text-danger small"></span>
+
+                    <label class="mt-2">Ghi chú</label>
+                    <textarea asp-for="NoiDungs[@i].GhiChu" rows="2" class="form-control"></textarea>
+
+                    <hr class="my-2" />
+                    <div class="fw-bold mb-2 text-secondary">Chi tiết</div>
+
+                    <label>Kết quả đạt được</label>
+                    <textarea asp-for="NoiDungs[@i].KetQuaDatDuoc" rows="2" class="form-control"></textarea>
+
+                    <label class="mt-2">Người hỗ trợ</label>
+                    <textarea asp-for="NoiDungs[@i].TrachNhiemHoTro" rows="2" class="form-control"></textarea>
+
+                    <label class="mt-2">Lý do chưa hoàn thành</label>
+                    <textarea asp-for="NoiDungs[@i].LyDoChuaHoanThanh" rows="2" class="form-control"></textarea>
+
+                    <label class="mt-2">Hướng giải quyết</label>
+                    <textarea asp-for="NoiDungs[@i].HuongGiaiQuyet" rows="2" class="form-control"></textarea>
+
+                    <div class="text-end mt-2">
+                        <button type="submit" name="removeRow" formnovalidate value="@i" class="btn btn-danger btn-sm">
+                            🗑 Xóa
+                        </button>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+    <div class="mt-4 text-end">
+        <a asp-action="XemLai" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Quay lại
+        </a>
+        <button type="submit" class="btn btn-success" name="Save">
+            <i class="fas fa-save"></i> Lưu chỉnh sửa
+        </button>
+    </div>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

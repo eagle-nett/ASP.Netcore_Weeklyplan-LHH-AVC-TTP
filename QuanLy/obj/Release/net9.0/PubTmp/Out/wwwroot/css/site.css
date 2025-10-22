@@ -1,0 +1,71 @@
+﻿html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
+  color: var(--bs-secondary-color);
+  text-align: end;
+}
+
+.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
+  text-align: start;
+}
+
+.sidebar .nav-link {
+    color: #333;
+    font-weight: 500;
+    padding: 0.6rem 0.9rem;
+    border-radius: 8px;
+    margin: 0.15rem 0;
+    transition: all 0.2s ease;
+}
+
+.sidebar .nav-link:hover,
+.sidebar .nav-link.active {
+    background-color: #e6f4ea;
+    color: #1e7d34;
+}
+
+.sidebar small {
+    display: block;
+    margin-bottom: .25rem;
+    font-size: 0.75rem;
+}
+
+footer {
+    font-size: 0.9rem;
+}
+
+    footer .nav-link:hover {
+        color: #0d6efd !important; /* xanh bootstrap */
+    }
+.btn-account {
+    background-color: #8c7356; /* màu nâu nhạt như hình */
+    color: #fff;
+    border: none;
+    transition: background-color 0.2s ease-in-out;
+}
+
+    .btn-account:hover {
+        background-color: #7a6249; /* đậm hơn chút khi hover */
+        color: #fff;
+    }

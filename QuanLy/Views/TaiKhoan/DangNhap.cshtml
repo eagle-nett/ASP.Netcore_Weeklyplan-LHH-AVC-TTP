@@ -1,0 +1,150 @@
+﻿@model string
+@{
+    ViewData["Title"] = "Đăng Nhập";
+}
+
+<style>
+    body {
+        background: #f7f9fc;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .login-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        gap: 50px;
+        padding: 20px;
+    }
+
+    .login-illustration {
+        flex: 1;
+        text-align: center;
+    }
+
+        .login-illustration img {
+            max-width: 80%;
+        }
+
+    .login-card {
+        background: white;
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        max-width: 420px;
+        width: 100%;
+    }
+
+        .login-card h3 {
+            font-weight: 700;
+            margin-bottom: 25px;
+            text-align: center;
+            color: #333;
+        }
+
+        .login-card .form-control {
+            border-radius: 10px;
+            padding: 12px 15px;
+        }
+
+        .login-card button.btn-primary {
+            background: linear-gradient(45deg, #4e73df, #224abe);
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+            .login-card button.btn-primary:hover {
+                background: linear-gradient(45deg, #224abe, #1e3c72);
+                transform: translateY(-2px);
+                box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            }
+
+    .forgot-link {
+        cursor: pointer;
+        color: #555;
+        transition: 0.3s;
+    }
+
+        .forgot-link:hover {
+            color: #224abe;
+            text-decoration: underline;
+        }
+
+    .contact-zalo {
+        display: none;
+        margin-top: 15px;
+    }
+
+    /* Mobile */
+    @@media (max-width: 768px) {
+        .login-wrapper
+
+    {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .login-illustration {
+        display: none;
+    }
+
+    }
+</style>
+
+<div class="login-wrapper">
+    <!-- Bên trái: ảnh minh họa -->
+    <div class="login-illustration">
+@*         <img src="~/images/2.jpg" alt="Login Illustration" /> *@
+        <img src="~/images/1.jpg" alt="Login Illustration" />
+    </div>
+
+    <!-- Bên phải: form login -->
+    <div class="login-card">
+        <h3>Đăng Nhập</h3>
+        <form asp-action="DangNhap" method="post">
+            <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
+
+            <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input type="email" name="email" class="form-control" required placeholder="nhap@example.com" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Mật khẩu</label>
+                <input type="password" name="password" class="form-control" required placeholder="********" />
+            </div>
+
+            <div class="d-grid mb-2">
+                <button type="submit" class="btn btn-primary btn-lg">Đăng nhập</button>
+            </div>
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="alert alert-danger mt-3">
+                    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                    {
+                        <div>@error.ErrorMessage</div>
+                    }
+                </div>
+            }
+        </form>
+
+        <div class="text-center mt-3">
+            <span class="forgot-link" onclick="showContact()">Quên mật khẩu?</span>
+            <div class="contact-zalo text-center">
+                <button class="btn btn-outline-primary mt-2" onclick="window.open('https://zalo.me/0912345678')">
+                    Liên hệ Zalo: 0336456341
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showContact() {
+        document.querySelector('.contact-zalo').style.display = 'block';
+    }
+</script>

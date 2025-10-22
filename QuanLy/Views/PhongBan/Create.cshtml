@@ -1,0 +1,134 @@
+﻿@model QuanLy.Models.PhongBan
+
+@{
+    ViewData["Title"] = "Thêm Phòng Ban";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    /* Font hiện đại */
+    body {
+        font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        background: #f8f9fc;
+    }
+
+    .card-custom {
+        border-radius: 20px;
+        border: none;
+        background: #fff;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+        .card-custom:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+        }
+
+    .form-control,
+    .form-select {
+        border-radius: 12px;
+        border: 1px solid #dee2e6;
+        transition: all 0.2s ease-in-out;
+        font-size: 15px;
+    }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #4a90e2;
+            box-shadow: 0 0 0 0.25rem rgba(74, 144, 226, 0.25);
+        }
+
+    label {
+        font-weight: 600;
+        font-size: 14px;
+        color: #495057;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #4a90e2, #357ABD);
+        border: none;
+        border-radius: 12px;
+        font-weight: 600;
+        transition: 0.3s;
+    }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #357ABD, #2C5AA0);
+            transform: translateY(-2px);
+        }
+
+    .btn-outline-secondary {
+        border-radius: 12px;
+        font-weight: 500;
+        transition: 0.3s;
+    }
+
+        .btn-outline-secondary:hover {
+            background: #f1f3f5;
+            transform: translateY(-2px);
+        }
+
+    h3 {
+        font-weight: 700;
+        letter-spacing: -0.5px;
+    }
+</style>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card card-custom p-4">
+                <div class="text-center mb-4">
+                    <h3 class="text-primary">@ViewData["Title"]</h3>
+                    <p class="text-muted">Vui lòng điền đầy đủ thông tin để thêm phòng ban</p>
+                </div>
+
+                <form asp-action="Create" method="post" novalidate>
+                    <div class="mb-3">
+                        <label asp-for="MaPhongBan" class="form-label"></label>
+                        <input asp-for="MaPhongBan" class="form-control" />
+                        <span asp-validation-for="MaPhongBan" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="TenPhongBan" class="form-label"></label>
+                        <input asp-for="TenPhongBan" class="form-control" />
+                        <span asp-validation-for="TenPhongBan" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="TenCongTy" class="form-label"></label>
+                        <select asp-for="TenCongTy" class="form-select">
+                            <option value="">-- Chọn công ty --</option>
+                            <option value="LHH">LHH</option>
+                            <option value="TTP">TTP</option>
+                        </select>
+                        <span asp-validation-for="TenCongTy" class="text-danger small"></span>
+                    </div>
+
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger rounded-3">
+                            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                            {
+                                <p class="mb-0">@error.ErrorMessage</p>
+                            }
+                        </div>
+                    }
+
+                    <div class="d-flex justify-content-between">
+                        <button type="submit" class="btn btn-primary px-4">Lưu</button>
+                        <a asp-action="Index" class="btn btn-outline-secondary px-4">Quay lại</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

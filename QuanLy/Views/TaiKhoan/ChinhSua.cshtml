@@ -1,0 +1,198 @@
+﻿@model QuanLy.Models.NguoiDung
+
+@{
+    ViewData["Title"] = "Chỉnh sửa người dùng";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var phongBans = ViewBag.PhongBans as List<QuanLy.Models.PhongBan>;
+    var congTys = ViewBag.CongTys as string[];
+    var roles = ViewBag.Roles as string[];
+    var currentRole = ViewBag.CurrentRole as string;
+}
+
+<style>
+    body {
+        background: #f3f4f6;
+    }
+
+    .register-card {
+        background: #fff;
+        padding: 40px;
+        border-radius: 18px;
+        box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        max-width: 700px;
+        margin: 30px auto;
+    }
+
+        .register-card h2 {
+            font-weight: 700;
+            margin-bottom: 25px;
+            color: #333;
+        }
+
+        .register-card label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .register-card .form-control,
+        .register-card .form-select {
+            border-radius: 12px;
+            padding: 12px 15px;
+            border: 1px solid #d1d5db;
+        }
+
+        .register-card .btn-primary {
+            background: linear-gradient(45deg, #4f46e5, #6d28d9);
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            padding: 12px 30px;
+            transition: 0.3s;
+            color: #fff;
+        }
+
+            .register-card .btn-primary:hover {
+                background: linear-gradient(45deg, #6a11cb, #2575fc);
+                box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+                transform: translateY(-2px);
+            }
+
+        .register-card .btn-secondary {
+            border-radius: 12px;
+            padding: 12px 30px;
+            font-weight: 500;
+            background: #f3f4f6;
+            color: #333;
+            border: 1px solid #d1d5db;
+        }
+
+            .register-card .btn-secondary:hover {
+                background: #e5e7eb;
+            }
+
+    .alert-danger p {
+        margin-bottom: 5px;
+    }
+</style>
+
+<div class="register-card">
+    <h2>@ViewData["Title"]</h2>
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger">
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <p>@error.ErrorMessage</p>
+            }
+        </div>
+    }
+
+    <form asp-action="ChinhSuaPost" method="post">
+        <input type="hidden" asp-for="Id" />
+
+        <div class="mb-3">
+            <label asp-for="MaNV"></label>
+            <input asp-for="MaNV" class="form-control" />
+            <span asp-validation-for="MaNV" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="HoTen"></label>
+            <input asp-for="HoTen" class="form-control" />
+            <span asp-validation-for="HoTen" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="DienThoai"></label>
+            <input asp-for="DienThoai" class="form-control" placeholder="(nếu có)" />
+            <span asp-validation-for="DienThoai" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="ChucVu">Chức vụ</label>
+            <select asp-for="ChucVu" class="form-select">
+                <option value="">-- Chọn chức vụ --</option>
+                @foreach (var role in roles)
+                {
+                    var selected = (Model.ChucVu == role) ? "selected" : "";
+                    <option value="@role" selected="@selected">@role</option>
+                }
+            </select>
+            <span asp-validation-for="ChucVu" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="ChucDanh"></label>
+            <input asp-for="ChucDanh" class="form-control" placeholder="(có thể bỏ trống)" />
+            <span asp-validation-for="ChucDanh" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="UserName">Tài khoản đăng nhập</label>
+            <input asp-for="UserName" class="form-control" />
+            <span asp-validation-for="UserName" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label for="password">Mật khẩu mới (nếu muốn đổi)</label>
+            <input type="password" name="password" class="form-control" placeholder="Để trống nếu không đổi" />
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="TenCongTy">Công ty</label>
+            <select asp-for="TenCongTy" class="form-select">
+                <option value="">-- Chọn công ty --</option>
+                @foreach (var cty in congTys)
+                {
+                    var selected = (Model.TenCongTy == cty) ? "selected" : "";
+                    <option value="@cty" selected="@selected">@cty</option>
+                }
+            </select>
+            <span asp-validation-for="TenCongTy" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="MaPhongBan">Phòng ban</label>
+            <select asp-for="MaPhongBan" class="form-select">
+                <option value="">-- Chọn phòng ban --</option>
+                @foreach (var pb in phongBans)
+                {
+                    var selected = (Model.MaPhongBan == pb.MaPhongBan) ? "selected" : "";
+                    <option value="@pb.MaPhongBan" selected="@selected">
+                        @pb.TenPhongBan (@pb.TenCongTy)
+                    </option>
+                }
+            </select>
+            <span asp-validation-for="MaPhongBan" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="GhiChu"></label>
+            <textarea asp-for="GhiChu" class="form-control" placeholder="(có thể bỏ trống)"></textarea>
+            <span asp-validation-for="GhiChu" class="text-danger"></span>
+        </div>
+
+        <div class="mb-4">
+            <label for="role">Phân quyền</label>
+            <select name="role" class="form-select">
+                <option value="">-- Chọn quyền --</option>
+                @foreach (var role in roles)
+                {
+                    var selected = (currentRole == role) ? "selected" : "";
+                    <option value="@role" selected="@selected">@role</option>
+                }
+            </select>
+            <span class="text-danger">@ViewData.ModelState["role"]?.Errors.FirstOrDefault()?.ErrorMessage</span>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+        <a asp-action="DanhSach" class="btn btn-secondary">Quay lại</a>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

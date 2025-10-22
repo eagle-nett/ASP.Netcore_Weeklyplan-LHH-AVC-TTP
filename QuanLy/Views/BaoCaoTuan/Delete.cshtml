@@ -1,0 +1,27 @@
+﻿@model QuanLy.ViewModels.BaoCaoTuanViewModel
+
+@{
+    ViewData["Title"] = "Xóa báo cáo tuần";
+}
+
+<div class="container mt-4">
+    <h3 class="text-danger mb-3">Xác nhận xóa báo cáo</h3>
+    <div class="alert alert-warning">
+        <p><strong>Bạn có chắc chắn muốn xóa báo cáo tuần này?</strong></p>
+        <ul>
+            <li><strong>Người báo cáo:</strong> @Model.HoTenNguoiBaoCao</li>
+            <li><strong>Tuần:</strong> @Model.Tuan (@Model.TuNgay.ToString("dd/MM") - @Model.DenNgay.ToString("dd/MM/yyyy"))</li>
+        </ul>
+        <p class="mb-0 text-danger"><strong>Lưu ý:</strong> Thao tác này sẽ xóa toàn bộ các nhiệm vụ trong báo cáo và không thể khôi phục.</p>
+    </div>
+
+    <form asp-action="Delete" method="post">
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="btn btn-danger">
+            <i class="bi bi-trash"></i> Xóa báo cáo
+        </button>
+        <a asp-action="XemLai" class="btn btn-secondary ms-2">
+            <i class="bi bi-arrow-left"></i> Quay lại
+        </a>
+    </form>
+</div>

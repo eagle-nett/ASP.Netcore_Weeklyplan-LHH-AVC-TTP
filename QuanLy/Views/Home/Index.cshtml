@@ -1,0 +1,251 @@
+﻿@{
+    ViewData["Title"] = "Trang chủ";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" href="~/css/home.css" />
+<style>
+    /* Hero */
+    .hero {
+        color: white;
+        padding: 80px 0;
+    }
+
+        .hero h1 {
+            font-size: 2.4rem;
+            font-weight: 700;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .hero img {
+            max-height: 380px;
+            animation: float 4s ease-in-out infinite;
+        }
+
+    @@keyframes float {
+        0%
+
+    {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-15px);
+    }
+
+    100% {
+        transform: translateY(0px);
+    }
+
+    }
+    /* Testimonials */
+    .testimonial {
+        background: #f9f9f9;
+        border-left: 5px solid #667eea;
+        padding: 20px;
+        border-radius: 10px;
+        font-style: italic;
+        margin-bottom: 20px;
+    }
+</style>
+
+<!-- HERO -->
+<section class="hero bg-light py-5">
+    <div class="container d-flex flex-column flex-lg-row align-items-center justify-content-between">
+        <!-- Text -->
+        <div class="hero-text text-center text-lg-start mb-4 mb-lg-0">
+            <h1 class="fw-bold display-5 text-primary">
+                Báo Cáo Tuần Dễ Dàng & Hiệu Quả
+            </h1>
+            <p class="lead text-muted">
+                Giúp nhân viên lập kế hoạch, báo cáo tiến độ công việc hàng tuần.
+            </p>
+            <br /><br />
+            @{
+                var isAuthenticated = User.Identity?.IsAuthenticated ?? false;
+            }
+
+            @if (isAuthenticated)
+            {
+                <a asp-controller="BaoCaoTuan" asp-action="Index" class="btn btn-primary btn-lg rounded-pill shadow">
+                    <i class="fas fa-clipboard-list me-2"></i> Lập báo cáo tuần
+                </a>
+            }
+            else
+            {
+                <a asp-controller="TaiKhoan" asp-action="DangNhap" class="btn btn-primary btn-lg rounded-pill shadow">
+                    <i class="fas fa-clipboard-list me-2"></i> Lập báo cáo tuần
+                </a>
+            }
+
+        </div>
+        <!-- Image -->
+        <div class="hero-illustration text-center">
+            <img src="~/images/2.jpg"
+                 alt="Weekly Report Illustration"
+                 class="img-fluid"
+                 style="max-height: 350px;">
+        </div>
+    </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">Tính Năng Nổi Bật</h2>
+            <p class="text-muted">Được thiết kế cho nhân viên, trưởng phòng và ban giám đốc</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-3">
+                <div class="card h-100 text-center shadow-sm border-0">
+                    <div class="card-body">
+                        <i class="fas fa-pencil-alt fa-2x text-primary mb-3"></i>
+                        <h5 class="card-title">Lập Kế Hoạch</h5>
+                        <p class="card-text">Nhân viên nhập công việc dự kiến làm trong tuần, có thể chỉnh sửa trước khi chốt.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card h-100 text-center shadow-sm border-0">
+                    <div class="card-body">
+                        <i class="fas fa-tasks fa-2x text-success mb-3"></i>
+                        <h5 class="card-title">Báo Cáo</h5>
+                        <p class="card-text">Cập nhật tiến độ từng nhiệm vụ, đánh dấu hoàn thành và thêm ghi chú chi tiết.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card h-100 text-center shadow-sm border-0">
+                    <div class="card-body">
+                        <i class="fas fa-user-check fa-2x text-warning mb-3"></i>
+                        <h5 class="card-title">Duyệt</h5>
+                        <p class="card-text">Cấp trên xem xét, duyệt hoặc yêu cầu chỉnh sửa báo cáo trước khi kết thúc tuần.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card h-100 text-center shadow-sm border-0">
+                    <div class="card-body">
+                        <i class="fas fa-chart-line fa-2x text-danger mb-3"></i>
+                        <h5 class="card-title">Thống Kê</h5>
+                        <p class="card-text">Xem thống kê hiệu suất cá nhân, phòng ban và toàn công ty theo từng tuần.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- IMAGE SECTION -->
+<section class="bg-light py-5">
+    <div class="container d-flex flex-column flex-lg-row align-items-center">
+        <div class="col-lg-6 mb-4 mb-lg-0">
+            <img src="~/images/3.jpg"
+                 alt="Analytics Illustration"
+                 class="img-fluid rounded shadow" />
+        </div>
+        <div class="col-lg-6 ps-lg-5 text-center text-lg-start">
+            <h2 class="fw-bold">Theo dõi tiến độ thông minh</h2>
+            <p class="text-muted">
+                Quản lý dễ dàng, duyệt nhanh chóng và xem báo cáo trực quan theo từng phòng ban.
+            </p>
+            @if (isAuthenticated)
+            {
+                <a href="/BaoCaoTuan/ThongKe" class="btn btn-outline-primary btn-lg rounded-pill shadow-sm">
+                    <i class="fas fa-chart-pie me-2"></i> Xem thống kê
+                </a>
+            }
+            else
+            {
+                <a asp-controller="TaiKhoan" asp-action="DangNhap" class="btn btn-outline-primary btn-lg rounded-pill shadow-sm">
+                    <i class="fas fa-chart-pie me-2"></i> Xem thống kê
+                </a>
+            }
+
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section text-center py-5">
+    <div class="container">
+        <h2 class="fw-bold mb-3">Bắt đầu báo cáo tuần ngay hôm nay</h2>
+        <p class="text-muted mb-4">
+            Tối ưu hóa quy trình quản lý công việc, tiết kiệm thời gian và giúp cả đội ngũ đồng bộ mục tiêu.
+        </p>
+        @if (isAuthenticated)
+        {
+            <a href="/BaoCaoTuan/Tao" class="btn btn-success btn-lg rounded-pill shadow">
+                <i class="fas fa-rocket me-2"></i> Tạo báo cáo đầu tiên
+            </a>
+        }
+        else
+        {
+            <a href="/TaiKhoan/DangNhap" class="btn btn-success btn-lg rounded-pill shadow">
+                <i class="fas fa-rocket me-2"></i> Tạo báo cáo đầu tiên
+            </a>
+        }
+    </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">Được tin dùng bởi đội ngũ công ty</h2>
+            <p class="text-muted">Một số phản hồi từ nhân viên và quản lý</p>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="testimonial">
+                    "Nhờ hệ thống này, việc báo cáo hàng tuần trở nên nhanh chóng và dễ dàng hơn rất nhiều."
+                    <div class="mt-2 fw-bold">— Nhân viên kinh doanh</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="testimonial">
+                    "Tôi có thể thống kê báo cáo của phòng ban chỉ trong vài phút thay vì hàng giờ."
+                    <div class="mt-2 fw-bold">— Leader</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="testimonial">
+                    "Báo cáo trực quan giúp tôi nắm rõ tình hình toàn công ty mà không cần chờ đợi."
+                    <div class="mt-2 fw-bold">— CEO</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- MAP -->
+<div class="container py-5">
+    <div class="row g-4 align-items-center">
+        <!-- Thông tin -->
+        <div class="col-lg-5">
+            <h2 class="fw-bold mb-3">Liên hệ với chúng tôi</h2>
+            <p class="text-muted">Hãy ghé thăm văn phòng hoặc liên hệ qua thông tin sau:</p>
+
+            <ul class="list-unstyled">
+                <li class="mb-3"><i class="fas fa-map-marker-alt text-danger me-2"></i> Phòng IT</li>
+                <li class="mb-3"><i class="fas fa-phone-alt text-success me-2"></i> Danh bạ điện thoại</li>
+                <li class="mb-3"><i class="fas fa-envelope text-primary me-2"></i> it2@lamhiephung.com</li>
+                <li class="mb-3"><i class="fas fa-globe text-info me-2"></i> www.lamhiephung.com</li>
+            </ul>
+        </div>
+
+        <!-- Bản đồ -->
+        <div class="col-lg-7">
+            <div class="map-container shadow rounded" style="overflow:hidden; padding-bottom:56.25%; position:relative; height:0;">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d7832.507487988227!2d106.730573!3d11.019579!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3174da7c550971c5%3A0x5125421835769cc7!2zQ8O0bmcgVHkgQ-G7lSBwaOG6p24gVGjGsMahbmcgTeG6oWkgROG7i2NoIFbhu6UgJiBT4bqjbiBYdeG6pXQgTMOibSBIaeG7h3AgSMawbmc!5e0!3m2!1svi!2sus!4v1758084703120!5m2!1svi!2sus"
+                        width="100%" height="100%" style="border:0; position:absolute; top:0; left:0;"
+                        allowfullscreen="" loading="lazy"></iframe>
+            </div>
+        </div>
+    </div>
+</div>

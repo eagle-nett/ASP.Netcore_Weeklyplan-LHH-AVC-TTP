@@ -1,0 +1,149 @@
+﻿@{
+    ViewData["Title"] = "Danh sách nhân viên";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var users = ViewBag.Users as List<dynamic>;
+}
+
+<style>
+    .employee-card {
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+        .employee-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+    .employee-avatar {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        background: #e5e7eb;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 22px;
+        color: #4f46e5;
+    }
+
+    .filter-bar {
+        margin-bottom: 20px;
+    }
+</style>
+
+<div class="container mt-4">
+    <h2 class="mb-4">@ViewData["Title"]</h2>
+
+    <!-- Bộ lọc và tìm kiếm -->
+    <div class="row filter-bar">
+        <div class="col-md-4 mb-2">
+            <input type="text" id="searchInput" class="form-control" placeholder="Tìm kiếm theo tên, mã NV, tài khoản..." />
+        </div>
+        <div class="col-md-3 mb-2">
+            <select id="filterPhongBan" class="form-select">
+                <option value="">-- Lọc theo phòng ban --</option>
+                @if (users != null)
+                {
+                    var phongBans = users.Select(u => (string)u.TenPhongBan).Distinct().OrderBy(p => p);
+                    foreach (var pb in phongBans)
+                    {
+                        <option value="@pb">@pb</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="col-md-3 mb-2">
+            <select id="filterCongTy" class="form-select">
+                <option value="">-- Lọc theo công ty --</option>
+                @if (users != null)
+                {
+                    var ctys = users.Select(u => (string)u.TenCongTy).Distinct().OrderBy(c => c);
+                    foreach (var cty in ctys)
+                    {
+                        <option value="@cty">@cty</option>
+                    }
+                }
+            </select>
+        </div>
+    </div>
+
+    <!-- Card grid -->
+    <div class="row" id="employeeContainer">
+        @if (users != null && users.Count > 0)
+        {
+            foreach (var u in users)
+            {
+                <div class="col-md-3 mb-4 employee-card-wrapper"
+                     data-ten="@u.HoTen"
+                     data-ma="@u.MaNV"
+                     data-username="@u.UserName"
+                     data-phongban="@u.TenPhongBan"
+                     data-congty="@u.TenCongTy">
+                    <div class="card employee-card h-100 p-3">
+                        <div class="text-center mb-3">
+                            <div class="employee-avatar">@u.HoTen.Substring(0, 1).ToUpper()</div>
+                        </div>
+                        <h5 class="text-center">@u.HoTen</h5>
+                        <p class="text-muted text-center mb-1">Mã NV: @u.MaNV</p>
+                        <p class="text-muted text-center mb-1">User: @u.UserName</p>
+                        <p class="text-muted text-center mb-1">Chức vụ: @u.ChucVu</p>
+                        <p class="text-muted text-center mb-1">Chức danh:  @u.ChucDanh</p>
+                        <p class="text-muted text-center mb-1">@u.TenPhongBan</p>
+                        <p class="text-muted text-center mb-1">Công ty: @u.TenCongTy</p>
+                        <p class="text-muted text-center mb-1">SDT: @u.DienThoai</p>
+                        <p class="text-muted text-center mb-1">Ghi chú: @u.GhiChu</p>
+                        <p class="text-muted text-center">Quyền: @u.Roles</p>
+
+                        <div class="d-flex justify-content-center gap-2 mt-2">
+                            <a asp-action="ChinhSua" asp-route-id="@u.Id" class="btn btn-sm btn-warning">Sửa</a>
+                            <a asp-action="Xoa" asp-route-id="@u.Id" class="btn btn-sm btn-danger">Xóa</a>
+                            <a asp-action="ResetPassword" asp-route-id="@u.Id" class="btn btn-sm btn-secondary">Reset</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <p class="text-danger text-center">Không có dữ liệu nhân viên.</p>
+        }
+    </div>
+</div>
+
+<script>
+    const searchInput = document.getElementById("searchInput");
+    const filterPhongBan = document.getElementById("filterPhongBan");
+    const filterCongTy = document.getElementById("filterCongTy");
+    const employees = document.querySelectorAll(".employee-card-wrapper");
+
+    function filterEmployees() {
+        const search = searchInput.value.toLowerCase();
+        const phongban = filterPhongBan.value;
+        const congty = filterCongTy.value;
+
+        employees.forEach(card => {
+            const ten = card.dataset.ten.toLowerCase();
+            const ma = card.dataset.ma.toLowerCase();
+            const username = card.dataset.username.toLowerCase();
+            const pb = card.dataset.phongban;
+            const ct = card.dataset.congty;
+
+            const matchSearch = ten.includes(search) || ma.includes(search) || username.includes(search);
+            const matchPhongBan = phongban === "" || pb === phongban;
+            const matchCongTy = congty === "" || ct === congty;
+
+            if (matchSearch && matchPhongBan && matchCongTy) {
+                card.style.display = "block";
+            } else {
+                card.style.display = "none";
+            }
+        });
+    }
+
+    searchInput.addEventListener("input", filterEmployees);
+    filterPhongBan.addEventListener("change", filterEmployees);
+    filterCongTy.addEventListener("change", filterEmployees);
+</script>

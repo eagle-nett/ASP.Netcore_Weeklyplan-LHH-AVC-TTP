@@ -1,0 +1,148 @@
+﻿@model QuanLy.Models.NguoiDung
+
+@{
+    ViewData["Title"] = "Tạo tài khoản Admin";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var phongBans = ViewBag.PhongBans as List<QuanLy.Models.PhongBan>;
+    var congTys = new[] { "LHH", "TTP" }; // bạn có thể truyền từ controller
+}
+
+<style>
+    .admin-card {
+        background: #fff;
+        padding: 40px;
+        border-radius: 18px;
+        box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        max-width: 750px;
+        margin: 40px auto;
+        animation: fadeIn 0.5s ease-in-out;
+    }
+
+        .admin-card h2 {
+            font-weight: 700;
+            margin-bottom: 25px;
+            color: #4f46e5;
+        }
+
+        .admin-card label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .admin-card .form-control,
+        .admin-card .form-select {
+            border-radius: 12px;
+            padding: 12px 15px;
+            border: 1px solid #d1d5db;
+        }
+
+        .admin-card .btn-primary {
+            background: linear-gradient(45deg, #4f46e5, #6d28d9);
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            padding: 12px 30px;
+            color: #fff;
+        }
+
+            .admin-card .btn-primary:hover {
+                background: linear-gradient(45deg, #6a11cb, #2575fc);
+                box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+                transform: translateY(-2px);
+            }
+
+        .admin-card .btn-secondary {
+            border-radius: 12px;
+            padding: 12px 30px;
+            font-weight: 500;
+            background: #f3f4f6;
+            color: #333;
+            border: 1px solid #d1d5db;
+        }
+
+            .admin-card .btn-secondary:hover {
+                background: #e5e7eb;
+            }
+
+    .alert-danger p {
+        margin-bottom: 5px;
+    }
+</style>
+
+<div class="admin-card">
+    <h2><i class="fas fa-user-shield me-2"></i>Tạo tài khoản Admin mới</h2>
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger">
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <p>@error.ErrorMessage</p>
+            }
+        </div>
+    }
+
+    <form asp-action="TaoAdmin" method="post">
+        <div class="mb-3">
+            <label asp-for="MaNV">Mã nhân viên</label>
+            <input asp-for="MaNV" class="form-control" placeholder="Nhập mã của bạn" />
+            <span asp-validation-for="MaNV" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="HoTen">Họ tên</label>
+            <input asp-for="HoTen" class="form-control" placeholder="Nhập họ tên của bạn" />
+            <span asp-validation-for="HoTen" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="UserName">Tên đăng nhập</label>
+            <input asp-for="UserName" class="form-control" placeholder="ví dụ: xxx@gmail.com" />
+            <span asp-validation-for="UserName" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="ChucVu">Chức vụ</label>
+            <input asp-for="ChucVu" class="form-control" placeholder="VD: Quản trị hệ thống" />
+            <span asp-validation-for="ChucVu" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="TenCongTy">Công ty</label>
+            <select asp-for="TenCongTy" class="form-select">
+                <option value="">-- Chọn công ty --</option>
+                @foreach (var cty in congTys)
+                {
+                    <option value="@cty">@cty</option>
+                }
+            </select>
+            <span asp-validation-for="TenCongTy" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label for="password">Mật khẩu</label>
+            <input type="password" name="password" class="form-control" placeholder="Nhập mật khẩu mạnh" />
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="MaPhongBan">Phòng ban</label>
+            <select asp-for="MaPhongBan" class="form-select">
+                <option value="">-- Chọn phòng ban --</option>
+                @foreach (var pb in phongBans)
+                {
+                    <option value="@pb.MaPhongBan">@pb.TenPhongBan (@pb.TenCongTy)</option>
+                }
+            </select>
+            <span asp-validation-for="MaPhongBan" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Tạo Admin</button>
+        <a asp-action="DanhSach" class="btn btn-secondary">Quay lại</a>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

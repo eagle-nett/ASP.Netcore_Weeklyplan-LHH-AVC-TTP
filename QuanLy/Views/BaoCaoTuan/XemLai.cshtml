@@ -1,0 +1,117 @@
+﻿@model List<QuanLy.Models.BaoCaoTuan>
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    ViewData["Title"] = "Xem lại báo cáo tuần";
+    var query = HttpContextAccessor.HttpContext.Request.Query;
+}
+
+<div class="container">
+    <h2 class="my-4 text-primary">📄 Xem lại báo cáo tuần</h2>
+
+    <!-- Bộ lọc tìm kiếm -->
+    <form method="get" asp-action="XemLai" class="mb-4 p-3 rounded shadow-sm border bg-light">
+        <div class="form-row">
+            <div class="form-group col-md-3">
+                <label><strong>📆 Tuần báo cáo</strong></label>
+                <select name="tuan" class="form-control">
+                    <option value="">-- Tất cả --</option>
+                    @foreach (var t in ViewBag.TuanOptions as List<SelectListItem>)
+                    {
+                        <option value="@t.Value" selected="@(query["tuan"] == t.Value)">
+                            @t.Text
+                        </option>
+                    }
+                </select>
+            </div>
+            <div class="form-group col-md-3">
+                <label><strong>👤 Người nhận báo cáo</strong></label>
+                <select name="nguoiNhan" class="form-control">
+                    <option value="">-- Tất cả --</option>
+                    @foreach (var nguoi in ViewBag.DanhSachNguoiNhan as List<SelectListItem>)
+                    {
+                        <option value="@nguoi.Value" selected="@(query["nguoiNhan"] == nguoi.Value)">
+                            @nguoi.Text
+                        </option>
+                    }
+                </select>
+            </div>
+            <div class="form-group col-md-3">
+                <label><strong>📌 Trạng thái</strong></label>
+                <select name="trangThai" class="form-control">
+                    <option value="">-- Tất cả --</option>
+                    <option value="DaDuyet" selected="@(query["trangThai"] == "DaDuyet")">✔ Đã duyệt</option>
+                    <option value="TuChoi" selected="@(query["trangThai"] == "TuChoi")">✖ Từ chối</option>
+                    <option value="ChoDuyet" selected="@(query["trangThai"] == "ChoDuyet")">⏳ Chờ duyệt</option>
+                </select>
+            </div>
+            <div class="form-group col-md-3 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">
+                    🔍 Lọc báo cáo
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Hiển thị kết quả -->
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center">
+            Không có báo cáo nào phù hợp với bộ lọc.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover shadow-sm">
+                <thead class="thead-dark">
+                    <tr class="text-center">
+                        <th>📅 Tuần</th>
+                        <th>Từ - Đến</th>
+                        <th>👤 Người QLTT</th>
+                        <th>📌 Trạng thái</th>
+                        <th>📝 Ghi chú</th>
+                        <th>Xem</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var baoCao in Model)
+                    {
+                        <tr>
+                            <td class="text-center align-middle">@baoCao.Tuan</td>
+                            <td>@baoCao.TuNgay.ToString("dd/MM/yyyy") - @baoCao.DenNgay.ToString("dd/MM/yyyy")</td>
+                            <td class="align-middle">@baoCao.BaoCaoCho?.HoTen</td>
+                            <td class="text-center align-middle">
+                                @switch (baoCao.TrangThai)
+                                {
+                                    case "DaDuyet":
+                                        <span class="badge badge-success px-3 py-1 text-bg-success">✔ Đã duyệt</span>
+                                        break;
+                                    case "TuChoi":
+                                        <span class="badge badge-danger px-3 py-1 text-bg-dark">✖ Từ chối</span>
+                                        break;
+                                    default:
+                                        <span class="badge badge-warning px-3 py-1 text-bg-warning">⏳ Chờ duyệt</span>
+                                        break;
+                                }
+                            </td>
+                            <td class="align-middle">@baoCao.GhiChuCuaCapTren</td>
+                            <td class="text-center align-middle">
+                                <a asp-action="ChiTiet" asp-route-id="@baoCao.Id" class="btn btn-sm btn-outline-info">
+                                    <i class="fas fa-eye"></i> Chi tiết
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <!-- Nút cancle -->
+        <div class="mt-4">
+            <a asp-action="Index" class="btn btn-outline-primary">
+                <i class="fas fa-arrow-left"></i> Quay lại trang
+            </a>
+        </div>
+    }
+</div>

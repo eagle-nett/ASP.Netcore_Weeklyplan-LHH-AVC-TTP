@@ -1,0 +1,101 @@
+﻿@model QuanLy.Models.XoaTaiKhoanViewModel
+
+@{
+    ViewData["Title"] = "Xóa người dùng";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .delete-card {
+        background: #fff;
+        padding: 40px;
+        border-radius: 18px;
+        box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        max-width: 600px;
+        margin: 30px auto;
+    }
+
+        .delete-card h2 {
+            font-weight: 700;
+            color: #d9534f;
+            margin-bottom: 20px;
+        }
+
+        .delete-card p {
+            font-size: 16px;
+            color: #333;
+        }
+
+        .delete-card .btn-danger {
+            padding: 12px 30px;
+            font-weight: 600;
+            border-radius: 12px;
+        }
+
+        .delete-card .btn-secondary {
+            padding: 12px 30px;
+            border-radius: 12px;
+        }
+
+        .delete-card input.form-control {
+            margin-top: 10px;
+        }
+</style>
+
+<div class="delete-card">
+    <h2>Xác nhận xóa tài khoản</h2>
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger">
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <p>@error.ErrorMessage</p>
+            }
+        </div>
+    }
+
+    <p><strong>Email / Tài khoản:</strong> @Model.Email</p>
+    <p><strong>Họ tên:</strong> @Model.HoTen</p>
+
+    @if (Model.IsAdmin)
+    {
+        <div class="alert alert-warning">
+            <strong>Đây là tài khoản Admin!</strong>
+            Vui lòng nhập mã bảo mật để thực hiện xóa:
+        </div>
+
+        <form asp-action="Xoa" method="post">
+            <input type="hidden" asp-for="Id" />
+
+            <label asp-for="SecurityCode"></label>
+            <input asp-for="SecurityCode" class="form-control" />
+
+            <span asp-validation-for="SecurityCode" class="text-danger"></span>
+
+            <div class="mt-4">
+                <button type="submit" class="btn btn-danger">Xóa</button>
+                <a asp-action="DanhSach" class="btn btn-secondary">Hủy</a>
+            </div>
+        </form>
+    }
+    else
+    {
+        <form asp-action="Xoa" method="post">
+            <input type="hidden" asp-for="Id" />
+
+            <p>Bạn có chắc chắn muốn xóa tài khoản này không?</p>
+
+            <div class="mt-4">
+                <button type="submit" class="btn btn-danger">Xóa</button>
+                <a asp-action="DanhSach" class="btn btn-secondary">Hủy</a>
+            </div>
+        </form>
+    }
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

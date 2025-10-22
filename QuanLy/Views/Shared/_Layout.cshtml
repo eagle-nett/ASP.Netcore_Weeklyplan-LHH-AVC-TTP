@@ -1,0 +1,407 @@
+﻿@* _Layout.cshtml *@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Hệ Thống Quản Lý</title>
+
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/css/site.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background: #f8fafc;
+        }
+
+        /* HEADER */
+        header.navbar {
+            background: #ffffff;
+            border-bottom: 1px solid #e5e7eb;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            z-index: 1030;
+        }
+
+        header .navbar-brand img {
+            height: 36px;
+            margin-right: 8px;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 240px;
+            background: #fff;
+            border-right: 1px solid #e5e7eb;
+            min-height: calc(100vh - 56px);
+            position: fixed;
+            top: 56px;
+            left: 0;
+            padding: 1rem;
+            transition: left 0.3s, width 0.3s;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+            .sidebar.collapsed {
+                width: 70px;
+            }
+
+            .sidebar small {
+                display: block;
+                margin: 0.5rem 0 0.25rem;
+                font-size: 0.75rem;
+                font-weight: 700;
+                color: #6b7280;
+                transition: opacity 0.2s;
+            }
+
+            .sidebar.collapsed small {
+                opacity: 0;
+            }
+
+            .sidebar .nav-link {
+                display: flex;
+                align-items: center;
+                font-weight: 500;
+                padding: 0.6rem 0.9rem;
+                color: #374151;
+                border-radius: 8px;
+                transition: all 0.2s ease;
+                white-space: nowrap;
+            }
+
+                .sidebar .nav-link i {
+                    width: 20px;
+                    text-align: center;
+                    margin-right: 8px;
+                    color: #16a34a;
+                    font-size: 1.1rem;
+                }
+
+            .sidebar.collapsed .nav-link span {
+                display: none;
+            }
+
+            .sidebar .nav-link:hover {
+                background-color: #ecfdf5;
+                color: #15803d;
+                transform: translateX(2px);
+            }
+
+        /* Toggle button (desktop) */
+        .sidebar-toggle {
+            border: none;
+            background: transparent;
+            font-size: 1.4rem;
+            cursor: pointer;
+            width: 100%;
+            padding: 0.6rem;
+            text-align: center;
+            color: #374151;
+            border-radius: 8px;
+        }
+
+            .sidebar-toggle:hover {
+                background-color: #ecfdf5;
+                color: #15803d;
+            }
+
+        /* MAIN CONTENT */
+        .content {
+            margin-left: 240px;
+            padding: 1.5rem;
+            flex-grow: 1;
+            transition: margin-left 0.3s;
+        }
+
+            .content.expanded {
+                margin-left: 70px;
+            }
+
+        footer {
+            background: #fff;
+            border-top: 1px solid #ddd;
+            text-align: center;
+            padding: 0.5rem;
+        }
+
+        /* Responsive cho mobile */
+        @@media (max-width: 768px) {
+            .sidebar
+
+        {
+            position: fixed;
+            top: 56px;
+            left: -240px;
+            height: calc(100vh - 56px);
+            z-index: 1040;
+        }
+
+        .sidebar.show {
+            left: 0;
+        }
+
+        .content {
+            margin-left: 0 !important;
+        }
+
+        .hamburger-btn {
+            display: inline-block !important;
+            background: transparent;
+            border: none;
+            font-size: 1.4rem;
+            margin-right: 10px;
+            color: #374151;
+        }
+
+            .hamburger-btn:focus {
+                outline: none;
+                box-shadow: none;
+            }
+
+        }
+
+        /* Ẩn nút hamburger trên desktop */
+        .hamburger-btn {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    @{
+        var isAuthenticated = User.Identity?.IsAuthenticated == true;
+        var isAdmin = User.IsInRole("Admin");
+        var isManager = User.IsInRole("TruongPhong") || User.IsInRole("GiamDoc");
+        var isVip = User.IsInRole("GiamDoc") || User.IsInRole("Admin");
+    }
+
+
+    <!-- HEADER -->
+    <header class="navbar navbar-expand-lg">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <!-- Nút hamburger hiển thị trên mobile -->
+                <button class="hamburger-btn" id="mobileMenuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <a class="navbar-brand d-flex align-items-center" href="/">
+                    <img src="~/images/logo.png" alt="Logo" />
+                </a>
+            </div>
+
+            <div class="d-flex align-items-center">
+                @if (isAuthenticated)
+                {
+                    <div class="dropdown d-inline-block">
+                        <a href="#" class="btn btn-custom py-2 px-4 rounded-pill dropdown-toggle d-inline-flex align-items-center"
+                           id="dropdownUserMenu" data-bs-toggle="dropdown" aria-expanded="false">
+                            👤 <strong>@User.Identity.Name</strong>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownUserMenu">
+                            <li>
+                                <a class="dropdown-item" asp-controller="TaiKhoan" asp-action="DoiMatKhau">
+                                    Đổi mật khẩu
+                                </a>
+                            </li>
+                            <li>
+                                <form method="post" asp-controller="TaiKhoan" asp-action="DangXuat">
+                                    <button type="submit" class="dropdown-item">Đăng xuất</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                }
+                else
+                {
+                    {
+
+                        <div class="dropdown d-inline-block"> 
+                            <a href="#" class="btn btn-custom py-2 px-4 rounded-pill dropdown-toggle d-inline-flex align-items-center" id="dropdownLoginMenu" data-bs-toggle="dropdown" aria-expanded="false"> <i class="fas fa-users"></i> </a> 
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownLoginMenu"> 
+                                <li> <a class="dropdown-item d-flex justify-content-between align-items-center fw-medium" asp-controller="TaiKhoan" asp-action="DangNhap" style="padding:8px 11px; border-radius:10px;"> <span>Đăng nhập</span> <i class="fas fa-angle-right"></i> </a> </li> 
+                            </ul> 
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </header>
+
+    <!-- SIDEBAR -->
+    <nav class="sidebar" id="sidebar">
+        <div>
+            <!-- Toggle Button đặt cuối sidebar -->
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <!-- Menu -->
+            <small>Chung</small>
+            <ul class="nav flex-column mb-3">
+                <li class="nav-item">
+                    <a class="nav-link" href="/"><i class="fas fa-home"></i><span>Trang chủ</span></a>
+                </li>
+                @if (isAuthenticated)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="BaoCaoTuan" asp-action="Index">
+                            <i class="fas fa-calendar-week"></i><span>Báo cáo tuần</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="BaoCaoTuan" asp-action="TrangThai">
+                            <i class="fas fa-chart-bar"></i><span>Trạng thái</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Guide" asp-action="Index">
+                            <i class="fas fa-book"></i> <span>Hướng dẫn</span>
+                        </a>
+                    </li>
+                    @if (isVip)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="BaoCaoTuan" asp-action="ThongKeNangCao">
+                                <i class="fas fa-chart-pie"></i><span>Lọc nâng cao</span>
+                            </a>
+                        </li>
+                    }
+                }
+            </ul>
+
+            @if (isAuthenticated && (isAdmin || isManager))
+            {
+                <small>Quản lý nhân sự</small>
+                <ul class="nav flex-column mb-3">
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="TaiKhoan" asp-action="DangKy">
+                            <i class="fas fa-user-plus"></i><span>Tạo nhân viên</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="TaiKhoan" asp-action="DanhSach">
+                            <i class="fas fa-users"></i><span>Danh sách nhân viên</span>
+                        </a>
+                    </li>
+                </ul>
+            }
+
+            @if (isAuthenticated && isAdmin)
+            {
+                <small>Quản trị</small>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="PhongBan" asp-action="Index">
+                            <i class="fas fa-building"></i><span>Phòng ban</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="TaiKhoan" asp-action="TaoAdmin">
+                            <i class="fas fa-user-shield"></i><span>Tạo Admin</span>
+                        </a>
+                    </li>
+                </ul>
+            }
+        </div>
+
+        <!--nút đăng xuất-->
+        @if (isAuthenticated)
+        {
+            <div class="d-flex justify-content-center align-items-center" style="min-height: 88vh;">
+                <form method="post" asp-controller="TaiKhoan" asp-action="DangXuat" class="d-inline">
+                    <button class="btn btn-outline-danger btn-lg rounded-circle shadow-sm" title="Đăng xuất" style="width:50px; height:50px;">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </form>
+            </div>
+        }
+
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="content" id="mainContent">
+        @RenderBody()
+    </main>
+
+@*     <!-- FOOTER -->
+    <footer>
+        © @DateTime.Now.Year - Hệ thống báo cáo tuần Lâm Hiệp Hưng
+    </footer> *@
+    <!-- FOOTER -->
+    <footer class="bg-light border-top mt-4 py-3">
+        <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center">
+            <!-- Logo + bản quyền -->
+            <div class="d-flex align-items-center mb-2 mb-md-0">
+                <img src="~/images/logo.png" alt="Logo" style="height:30px;" class="me-2" />
+                <span class="text-muted">&copy; @DateTime.Now.Year - LAM HIEP HUNG JSC . All rights reserved.</span>
+            </div>
+
+            <!-- Menu nhỏ -->
+            <ul class="nav">
+                <li class="nav-item">
+                    <a class="nav-link text-muted" asp-controller="Home" asp-action="Index">Trang chủ</a>
+                </li>
+                <li class="nav-item">
+                    @if (User.Identity?.IsAuthenticated ?? false)
+                    {
+                        <a class="nav-link text-muted" asp-controller="BaoCaoTuan" asp-action="Index">Báo cáo tuần</a>
+                    }
+                    else
+                    {
+                        <a class="nav-link text-muted" asp-controller="TaiKhoan" asp-action="DangNhap">Báo cáo tuần</a>
+                    }
+                </li>
+                <li class="nav-item">
+                    @if (User.Identity?.IsAuthenticated ?? false)
+                    {
+                        <a class="nav-link text-muted" asp-controller="Guide" asp-action="Index">Hướng dẫn</a>
+                    }
+                    else
+                    {
+                        <a class="nav-link text-muted" asp-controller="TaiKhoan" asp-action="DangNhap">Hướng dẫn</a>
+                    }
+                </li>
+
+                <li class="nav-item">
+
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-muted" asp-controller="Guide" asp-action="Help">Trợ giúp</a>
+                </li>
+            </ul>
+        </div>
+    </footer>
+
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const sidebar = document.getElementById("sidebar");
+        const mainContent = document.getElementById("mainContent");
+        const toggleBtn = document.getElementById("sidebarToggle");
+        const mobileBtn = document.getElementById("mobileMenuToggle");
+
+        // desktop toggle
+        if (localStorage.getItem("sidebarCollapsed") === "true") {
+            sidebar.classList.add("collapsed");
+            mainContent.classList.add("expanded");
+        }
+
+        toggleBtn.addEventListener("click", () => {
+            sidebar.classList.toggle("collapsed");
+            mainContent.classList.toggle("expanded");
+            localStorage.setItem("sidebarCollapsed", sidebar.classList.contains("collapsed"));
+        });
+
+        // mobile toggle
+        mobileBtn.addEventListener("click", () => {
+            sidebar.classList.toggle("show");
+        });
+    </script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

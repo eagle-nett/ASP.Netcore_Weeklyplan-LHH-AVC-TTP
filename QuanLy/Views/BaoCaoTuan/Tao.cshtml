@@ -1,0 +1,352 @@
+﻿@model QuanLy.ViewModels.BaoCaoTuanViewModel
+
+@{
+    ViewData["Title"] = "Tạo báo cáo tuần";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var userAgent = Context.Request.Headers["User-Agent"].ToString();
+    bool isMobile = userAgent.Contains("Mobile") || userAgent.Contains("Android") || userAgent.Contains("iPhone");
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4 text-primary">📝 @ViewData["Title"]</h2>
+
+    <style>
+        /* --- Áp dụng chung cho textarea --- */
+        textarea.form-control {
+            min-height: 60px;
+            width: 100%;
+            resize: vertical;
+        }
+
+        /* --- Desktop: mở rộng bố cục bảng và set width từng cột --- */
+        @@media (min-width: 768px) {
+            textarea .form-control
+
+        {
+            min-height: 120px;
+            height: auto;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        table.table td {
+            vertical-align: top;
+        }
+
+            /* --- Tùy chỉnh độ rộng từng cột --- */
+            table.table th:nth-child(1), table.table td:nth-child(1) {
+                width: 5%;
+            }
+
+            table.table th:nth-child(2), table.table td:nth-child(2) {
+                width: 15%;
+            }
+
+            table.table th:nth-child(3), table.table td:nth-child(3) {
+                width: 25%;
+            }
+
+            table.table th:nth-child(4), table.table td:nth-child(4) {
+                width: 5%;
+            }
+
+            table.table th:nth-child(5), table.table td:nth-child(5) {
+                width: 20%;
+            }
+
+            table.table th:nth-child(6), table.table td:nth-child(6) {
+                width: 10%;
+            }
+
+            table.table th:nth-child(7), table.table td:nth-child(7) {
+                width: 20%;
+            }
+
+        }
+
+        /* Mobile spacing for card view */
+        .mobile-card textarea.form-control,
+        .mobile-card input.form-control,
+        .mobile-card select.form-select {
+            font-size: 15px;
+            padding: .45rem;
+        }
+    </style>
+
+    @if (ViewData["ThongBaoTrungTuan"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-triangle"></i> @ViewData["ThongBaoTrungTuan"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Đóng"></button>
+        </div>
+    }
+
+    <form asp-action="Tao" method="post">
+        @Html.AntiForgeryToken()
+
+        <!-- Thông tin chung -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white">
+                Thông tin chung
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label">👤 Người báo cáo</label>
+                    <input asp-for="HoTenNguoiBaoCao" class="form-control" readonly />
+                    <input asp-for="NguoiBaoCaoId" type="hidden" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">🏢 Mã phòng ban QLTT</label>
+                    <select asp-for="MaPhongBan" asp-items="Model.DanhSachPhongBan" class="form-select"
+                            onchange="this.form.submit()">
+                        <option value="">-- Chọn phòng ban --</option>
+                    </select>
+                    <span asp-validation-for="MaPhongBan" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">👨‍💼 Quản lý trực tiếp</label>
+                    <select asp-for="BaoCaoChoId" asp-items="Model.DanhSachNguoiNhan" class="form-select">
+                        <option value="">-- Chọn người nhận --</option>
+                    </select>
+                    <span asp-validation-for="BaoCaoChoId" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">📅 Tuần báo cáo</label>
+                    <select id="TuanBaoCao" asp-for="Tuan" asp-items="Model.TuanOptions" class="form-select">
+                        <option value="">-- Chọn tuần --</option>
+                    </select>
+                    <span asp-validation-for="Tuan" class="text-danger"></span>
+                </div>
+
+                <div class="row g-2">
+                    <div class="col">
+                        <label class="form-label">Từ ngày</label>
+                        <input id="TuNgay" asp-for="TuNgay" type="date" class="form-control" readonly />
+                    </div>
+                    <div class="col">
+                        <label class="form-label">Đến ngày</label>
+                        <input id="DenNgay" asp-for="DenNgay" type="date" class="form-control" readonly />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr />
+        <h4 class="mb-3">Nội dung báo cáo</h4>
+
+        <div class="mb-2">
+            <button type="submit" name="addRow" formnovalidate class="btn btn-sm btn-secondary w-100 w-md-auto">+ Thêm dòng</button>
+        </div>
+
+        <!-- === Render only one layout server-side to avoid duplicate inputs === -->
+        @if (!isMobile)
+        {
+            <!-- DESKTOP: table layout -->
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-primary text-center sticky-top">
+                        <tr>
+                            <th>STT</th>
+                            <th>Mảng việc</th>
+                            <th>Nội dung</th>
+                            <th>Ngày hoàn thành</th>
+                            <th>Mục tiêu</th>
+                            <th>Tiến độ </th>
+                            <th>Ghi chú</th>
+                            <th>Chi tiết</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.NoiDungs.Count; i++)
+                        {
+                            <tr>
+                                <td class="text-center fw-bold">@((i + 1).ToString("D2"))</td>
+                                <td>
+                                    <textarea asp-for="NoiDungs[@i].TrachNhiemChinh" rows="1" class="form-control"></textarea>
+                                    <span asp-validation-for="NoiDungs[@i].TrachNhiemChinh" class="text-danger small"></span>
+                                </td>
+                                <td>
+                                    <div>
+                                        <textarea asp-for="NoiDungs[@i].NoiDung" class="form-control" rows="3"></textarea>
+                                        <small class="text-danger"><span asp-validation-for="NoiDungs[@i].NoiDung"></span></small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <input asp-for="NoiDungs[@i].NgayHoanThanh" type="date" class="form-control" />
+                                </td>
+                                <td>
+                                    <textarea asp-for="NoiDungs[@i].MucDoUuTien" rows="2" class="form-control"></textarea>
+                                    <span asp-validation-for="NoiDungs[@i].MucDoUuTien" class="text-danger small"></span>
+                                </td>
+                                <td>
+                                    <select asp-for="NoiDungs[@i].TienDo" class="form-select">
+                                        <option value="">--</option>
+                                        <option>Đã hoàn thành</option>
+                                        <option>Chưa hoàn thành</option>
+                                    </select>
+                                    <span asp-validation-for="NoiDungs[@i].TienDo" class="text-danger small"></span>
+                                </td>
+                                <td>
+                                    <textarea asp-for="NoiDungs[@i].GhiChu" rows="2" class="form-control"></textarea>
+                                </td>
+                                <td class="text-center">
+                                    <button class="btn btn-outline-secondary btn-sm" type="button"
+                                            data-bs-toggle="collapse" data-bs-target="#chiTiet_@i">
+                                        <i class="fas fa-chevron-down"></i>
+                                    </button>
+                                </td>
+                                <td class="text-center">
+                                    <button type="submit" name="removeRow" formnovalidate value="@i" class="btn btn-danger btn-sm">🗑</button>
+                                </td>
+                            </tr>
+
+                            <tr class="collapse bg-light" id="chiTiet_@i">
+                                <td colspan="9">
+                                    <div class="row g-3">
+                                        <div class="col-md-3">
+                                            <label>Kết quả đạt được</label>
+                                            <textarea asp-for="NoiDungs[@i].KetQuaDatDuoc" rows="2" class="form-control"></textarea>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label>Người hỗ trợ</label>
+                                            <textarea asp-for="NoiDungs[@i].TrachNhiemHoTro" rows="2" class="form-control"></textarea>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label>Lý do chưa hoàn thành</label>
+                                            <textarea asp-for="NoiDungs[@i].LyDoChuaHoanThanh" rows="2" class="form-control"></textarea>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label>Hướng giải quyết</label>
+                                            <textarea asp-for="NoiDungs[@i].HuongGiaiQuyet" rows="2" class="form-control"></textarea>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <!-- MOBILE: EXACT mobile card layout you requested -->
+            <div class="d-block">
+                @for (int i = 0; i < Model.NoiDungs.Count; i++)
+                {
+                    <div class="border rounded p-3 mb-3 shadow-sm mobile-card">
+                        <div class="fw-bold mb-2 text-primary">Kế hoạch @(i + 1)</div>
+
+                        <div class="mb-2">
+                            <label>Mảng việc</label>
+                            <textarea asp-for="NoiDungs[@i].TrachNhiemChinh" rows="2" class="form-control"></textarea>
+                            <span asp-validation-for="NoiDungs[@i].TrachNhiemChinh" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-2">
+                            <label>Nội dung</label>
+                            <textarea asp-for="NoiDungs[@i].NoiDung" rows="4" class="form-control"></textarea>
+                            <span asp-validation-for="NoiDungs[@i].NoiDung" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-2">
+                            <label>Ngày hoàn thành</label>
+                            <input asp-for="NoiDungs[@i].NgayHoanThanh" type="date" class="form-control" />
+                        </div>
+
+                        <div class="mb-2">
+                            <label>Mục tiêu</label>
+                            <textarea asp-for="NoiDungs[@i].MucDoUuTien" rows="1" class="form-control"></textarea>
+                            <span asp-validation-for="NoiDungs[@i].MucDoUuTien" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-2">
+                            <label>Tiến độ</label>
+                            <select asp-for="NoiDungs[@i].TienDo" class="form-select">
+                                <option value="">--</option>
+                                <option>Đã hoàn thành</option>
+                                <option>Chưa hoàn thành</option>
+                            </select>
+                            <span asp-validation-for="NoiDungs[@i].TienDo" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-2">
+                            <label>Ghi chú</label>
+                            <textarea asp-for="NoiDungs[@i].GhiChu" rows="2" class="form-control"></textarea>
+                        </div>
+
+                        <hr class="my-2" />
+                        <div class="fw-bold mb-2 text-secondary">Chi tiết</div>
+
+                        <div class="mb-2">
+                            <label>Kết quả đạt được</label>
+                            <textarea asp-for="NoiDungs[@i].KetQuaDatDuoc" rows="2" class="form-control"></textarea>
+                        </div>
+
+                        <div class="mb-2">
+                            <label>Người hỗ trợ</label>
+                            <textarea asp-for="NoiDungs[@i].TrachNhiemHoTro" rows="2" class="form-control"></textarea>
+                        </div>
+
+                        <div class="mb-2">
+                            <label>Lý do chưa hoàn thành</label>
+                            <textarea asp-for="NoiDungs[@i].LyDoChuaHoanThanh" rows="2" class="form-control"></textarea>
+                        </div>
+
+                        <div class="mb-2">
+                            <label>Hướng giải quyết</label>
+                            <textarea asp-for="NoiDungs[@i].HuongGiaiQuyet" rows="2" class="form-control"></textarea>
+                        </div>
+
+                        <div class="text-end mt-2">
+                            <button type="submit" name="removeRow" formnovalidate value="@i" class="btn btn-sm btn-danger"
+                                    onclick="return confirm('Xóa dòng này?');">
+                                🗑 Xóa
+                            </button>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+
+        <div class="d-flex flex-column flex-md-row justify-content-between mt-4 gap-2">
+            <button type="submit" class="btn btn-primary w-100 w-md-auto">Gửi báo cáo</button>
+            <a asp-action="Index" class="btn btn-outline-primary w-100 w-md-auto">Quay lại</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        // Cập nhật Từ/Đến ngày theo option tuần (hiển thị chỉ phục vụ UX, server vẫn tính TUAN thực tế)
+        (function () {
+            var select = document.getElementById("TuanBaoCao");
+            if (!select) return;
+
+            select.addEventListener("change", function () {
+                var selectedText = this.options[this.selectedIndex] ? this.options[this.selectedIndex].text : "";
+                var match = selectedText.match(/\((\d{2}\/\d{2}\/\d{4}) – (\d{2}\/\d{2}\/\d{4})\)/);
+                if (match) {
+                    var tuNgay = match[1].split('/').reverse().join('-');
+                    var denNgay = match[2].split('/').reverse().join('-');
+                    var tuInput = document.getElementById("TuNgay");
+                    var denInput = document.getElementById("DenNgay");
+                    if (tuInput) tuInput.value = tuNgay;
+                    if (denInput) denInput.value = denNgay;
+                }
+            }); 
+
+            window.addEventListener("load", function () {
+                if (select && select.value) select.dispatchEvent(new Event("change"));
+            });
+        })();
+    </script>
+}

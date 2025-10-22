@@ -1,0 +1,172 @@
+﻿@model QuanLy.Models.BaoCaoTuan
+
+@{
+    ViewData["Title"] = "Chi tiết báo cáo tuần";
+    var stt = 1;
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4 text-primary">📝 Chi tiết báo cáo tuần @Model.Tuan</h2>
+
+    <!-- Thông tin tổng quan -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+            Thông tin chung
+        </div>
+        <div class="card-body">
+            <div class="row mb-2">
+                <div class="col-md-6"><strong>👤 Người báo cáo:</strong> @Model.NguoiBaoCao?.HoTen</div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-md-6"><strong>👨‍💼 Báo cáo cho:</strong> @Model.BaoCaoCho?.HoTen</div>
+                <div class="col-md-6"><strong>📅 Tuần báo cáo:</strong> @Model.Tuan</div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-md-6"><strong>🗓 Từ ngày:</strong> @Model.TuNgay.ToString("dd/MM/yyyy")</div>
+                <div class="col-md-6"><strong>🗓 Đến ngày:</strong> @Model.DenNgay.ToString("dd/MM/yyyy")</div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-md-6">
+                    <strong>📌 Trạng thái:</strong>
+                    @switch (Model.TrangThai)
+                    {
+                        case "DaDuyet":
+                            <span class="badge text-bg-success px-3 py-1">✔ Đã duyệt</span>
+                            break;
+                        case "TuChoi":
+                            <span class="badge text-bg-danger px-3 py-1">✖ Từ chối</span>
+                            break;
+                        default:
+                            <span class="badge text-bg-warning px-3 py-1">⏳ Chờ duyệt</span>
+                            break;
+                    }
+                </div>
+            </div>
+
+            @if (!string.IsNullOrWhiteSpace(Model.GhiChuCuaCapTren))
+            {
+                <div class="row">
+                    <div class="col-md-12">
+                        <strong>📝 Ghi chú của cấp trên:</strong>
+                        <div class="alert alert-danger mt-2">@Model.GhiChuCuaCapTren</div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Nút thao tác -->
+    <div class="d-flex justify-content-end gap-2 mt-3">
+        <!-- Nút edit -->
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+            <i class="fas fa-edit"></i> Chỉnh sửa
+        </a>
+
+        <!-- Nút xuất Excel -->
+        <a asp-action="ExportExcel" asp-route-id="@Model.Id" class="btn btn-success">
+            <i class="bi bi-file-earmark-excel"></i> Xuất Excel
+        </a>
+
+        <!-- Nút delete -->
+        <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger"
+           onclick="return confirm('Bạn có chắc chắn muốn xóa báo cáo này không?');">
+            <i class="bi bi-trash"></i> Xóa
+        </a>
+    </div>
+
+    <!-- Nội dung chi tiết -->
+    <div class="card shadow-sm mt-4">
+        <div class="card-header bg-secondary text-white">
+            Nội dung chi tiết các nhiệm vụ
+        </div>
+        <div class="card-body p-0">
+
+            <!-- Desktop -->
+            <div class="table-responsive d-none d-md-block">
+                <table class="table table-bordered table-striped mb-0">
+                    <thead class="table-primary text-center align-middle">
+                        <tr>
+                            <th>STT</th>
+                            <th>Mảng việc</th>
+                            <th>Nội dung</th>
+                            <th>Ngày hoàn thành</th>
+                            <th>Mục tiêu</th>
+                            <th>Tiến độ</th>
+                            <th>Ghi chú</th>
+                            <th>Kết quả đạt được</th>
+                            <th>Người hỗ trợ</th>
+                            <th>Lý do chưa hoàn thành</th>
+                            <th>Hướng giải quyết</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.NoiDungs)
+                        {
+                            <tr>
+                                <td class="text-center fw-bold">@stt</td>
+                                <td>@item.TrachNhiemChinh</td>
+                                <td>@item.NoiDung</td>
+                                <td class="text-center">@item.NgayHoanThanh?.ToString("dd/MM/yyyy")</td>
+                                <td>@item.MucDoUuTien</td>
+                                <td class="text-center">
+                                    @if (item.TienDo == "Đã hoàn thành")
+                                    {
+                                        <span class="badge bg-success">✔ Hoàn thành</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">⏳ Chưa hoàn thành</span>
+                                    }
+                                </td>
+                                <td>@item.GhiChu</td>
+                                <td>@item.KetQuaDatDuoc</td>
+                                <td>@item.TrachNhiemHoTro</td>
+                                <td>@item.LyDoChuaHoanThanh</td>
+                                <td>@item.HuongGiaiQuyet</td>
+                            </tr>
+                            stt++;
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Mobile -->
+            <div class="d-block d-md-none p-3">
+                @foreach (var item in Model.NoiDungs)
+                {
+                    <div class="border rounded p-3 mb-3 shadow-sm">
+                        <div><strong>STT:</strong> @stt</div>
+                        <div><strong>Mảng việc:</strong> @item.TrachNhiemChinh</div>
+                        <div><strong>Nội dung:</strong> @item.NoiDung</div>
+                        <div><strong>Ngày hoàn thành:</strong> @item.NgayHoanThanh?.ToString("dd/MM/yyyy")</div>
+                        <div><strong>Mục tiêu:</strong> @item.MucDoUuTien</div>
+                        <div>
+                            <strong>Tiến độ:</strong>
+                            @if (item.TienDo == "Đã hoàn thành")
+                            {
+                                <span class="badge bg-success">✔ Hoàn thành</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">⏳ Chưa hoàn thành</span>
+                            }
+                        </div>
+                        <div><strong>Ghi chú:</strong> @item.GhiChu</div>
+                        <div><strong>Kết quả đạt được:</strong> @item.KetQuaDatDuoc</div>
+                        <div><strong>Người hỗ trợ:</strong> @item.TrachNhiemHoTro</div>
+                        <div><strong>Lý do chưa hoàn thành:</strong> @item.LyDoChuaHoanThanh</div>
+                        <div><strong>Hướng giải quyết:</strong> @item.HuongGiaiQuyet</div>
+                    </div>
+                    stt++;
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Nút quay lại -->
+    <div class="mt-4 text-center">
+        <a asp-action="XemLai" class="btn btn-outline-primary">
+            <i class="fas fa-arrow-left"></i> Quay lại danh sách
+        </a>
+    </div>
+</div>

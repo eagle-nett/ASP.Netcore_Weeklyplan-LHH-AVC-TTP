@@ -1,0 +1,193 @@
+﻿@{
+    ViewData["Title"] = "Báo cáo tuần";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container py-5">
+    <!-- Header -->
+    <div class="text-center mb-5">
+        <h1 class="fw-bold text-dark">
+            <i class="fas fa-clipboard-list text-primary me-2"></i> Báo cáo tuần - Lâm Hiệp Hưng
+        </h1>
+        <p class="text-muted">Theo dõi, lập kế hoạch và cập nhật tiến độ công việc theo từng tuần.</p>
+    </div>
+
+    <!-- Cards -->
+    <div class="row g-4">
+        <!-- Lập kế hoạch -->
+        <div class="col-lg-4 col-md-6">
+            <div class="card shadow-lg border-0 h-100 rounded-4 hover-card">
+                <div class="card-body text-center d-flex flex-column justify-content-between">
+                    <div>
+                        <div class="icon-circle bg-gradient-success mb-3">
+                            <i class="fas fa-calendar-plus fa-2x text-white"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2">Lập kế hoạch tuần</h5>
+                        <p class="text-muted">Tạo báo cáo mới, lập kế hoạch công việc và gửi cho cấp trên.</p>
+                    </div>
+                    <a asp-action="Tao" class="btn btn-success rounded-pill shadow-sm mt-3">
+                        <i class="fas fa-plus-circle me-2"></i> Tạo báo cáo
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Xem lại báo cáo -->
+        <div class="col-lg-4 col-md-6">
+            <div class="card shadow-lg border-0 h-100 rounded-4 hover-card">
+                <div class="card-body text-center d-flex flex-column justify-content-between">
+                    <div>
+                        <div class="icon-circle bg-gradient-info mb-3">
+                            <i class="fas fa-history fa-2x text-white"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2">Danh sách dữ liệu đã báo cáo</h5>
+                        <p class="text-muted">Kiểm tra lại báo cáo cũ, trạng thái duyệt và chỉnh sửa khi cần.</p>
+                    </div>
+                    <a asp-action="XemLai" class="btn btn-info rounded-pill shadow-sm mt-3">
+                        <i class="fas fa-eye me-2"></i> Xem lại
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Thống kê / Lọc báo cáo -->
+        <div class="col-lg-4 col-md-6">
+            <div class="card shadow-lg border-0 h-100 rounded-4 hover-card">
+                <div class="card-body text-center d-flex flex-column justify-content-between">
+                    <div>
+                        <div class="icon-circle bg-gradient-warning mb-3">
+                            <i class="fas fa-chart-line fa-2x text-white"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2">Thống kê báo cáo</h5>
+                        <p class="text-muted">Lọc và xem thống kê báo cáo theo phòng ban, trạng thái và tuần.</p>
+                    </div>
+                    <a asp-action="ThongKe" class="btn btn-warning rounded-pill shadow-sm mt-3 text-white">
+                        <i class="fas fa-filter me-2"></i> Lọc báo cáo
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gợi ý -->
+    <div class="alert alert-info mt-5 shadow-sm rounded-4 d-flex align-items-center">
+        <i class="fas fa-bullhorn fa-lg me-3 text-primary"></i>
+        <div>
+            <strong>Thông báo:</strong> Hạn chốt báo cáo mỗi tuần vào lúc <b>23:59 - Chủ Nhật</b>.
+            Vui lòng kiểm tra lại xem có báo cáo chưa trước khi thoát.
+        </div>
+    </div>
+
+
+</div>
+
+<!-- Quick Actions -->
+<div class="text-center mt-5">
+    <h5 class="fw-bold mb-3">Truy cập nhanh</h5>
+    <div class="d-flex justify-content-center gap-4 flex-wrap">
+        <a asp-action="Tao" class="quick-action">
+            <i class="fas fa-plus"></i><span>Lập kế hoạch</span>
+        </a>
+        <a asp-action="XemLai" class="quick-action">
+            <i class="fas fa-folder-open"></i><span>Xem dữ liệu</span>
+        </a>
+        <a asp-action="ThongKe" class="quick-action">
+            <i class="fas fa-chart-bar"></i><span>Thống kê</span>
+        </a>
+    </div>
+</div>
+</div>
+
+<!-- CSS riêng -->
+<style>
+    .icon-circle {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+
+    .bg-gradient-success {
+        background: linear-gradient(135deg, #28a745, #6ddf8b);
+    }
+
+    .bg-gradient-info {
+        background: linear-gradient(135deg, #17a2b8, #6ec6f0);
+    }
+
+    .bg-gradient-warning {
+        background: linear-gradient(135deg, #ffc107, #ffd86f);
+    }
+
+    .hover-card {
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .hover-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    .icon-circle {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+
+    .bg-gradient-success {
+        background: linear-gradient(135deg, #28a745, #6ddf8b);
+    }
+
+    .bg-gradient-info {
+        background: linear-gradient(135deg, #17a2b8, #6ec6f0);
+    }
+
+    .bg-gradient-warning {
+        background: linear-gradient(135deg, #ffc107, #ffd86f);
+    }
+
+    .hover-card {
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+        .hover-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+    .quick-action {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: #f8f9fa;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        text-decoration: none;
+        color: #333;
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+    }
+
+        .quick-action span {
+            font-size: 0.85rem;
+            margin-top: 6px;
+        }
+
+        .quick-action:hover {
+            background: #007bff;
+            color: #fff;
+            transform: translateY(-4px);
+        }
+</style>

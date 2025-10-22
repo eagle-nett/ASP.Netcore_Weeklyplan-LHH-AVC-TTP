@@ -1,0 +1,46 @@
+﻿@model IEnumerable<QuanLy.Models.BaoCaoTuan>
+@using QuanLy.Models
+
+@{
+    ViewData["Title"] = "Chỉnh Sửa Báo Cáo Tuần";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="mb-4"><i class="fas fa-edit me-2"></i>@ViewData["Title"]</h2>
+
+<table class="table table-bordered table-hover">
+    <thead class="table-secondary">
+        <tr>
+            <th>Tuần</th>
+            <th>Từ ngày</th>
+            <th>Đến ngày</th>
+            <th>Người báo cáo</th>
+            <th>Người nhận</th>
+            <th>Số nội dung</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Tuan</td>
+                <td>@item.TuNgay.ToString("dd/MM/yyyy")</td>
+                <td>@item.DenNgay.ToString("dd/MM/yyyy")</td>
+                <td>@item.NguoiBaoCao?.HoTen</td>
+                <td>@item.BaoCaoCho?.HoTen</td>
+                <td>@item.NoiDungs?.Count()</td>
+                <td>
+                    <a asp-controller="BaoCaoTuan" asp-action="ChinhSua" asp-route-id="@item.Id" class="btn btn-sm btn-primary">
+                        <i class="fas fa-pen"></i> Sửa
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">Không có báo cáo nào để chỉnh sửa.</div>
+}
