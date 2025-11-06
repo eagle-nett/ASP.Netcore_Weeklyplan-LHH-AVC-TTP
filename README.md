@@ -6,7 +6,7 @@ Hệ thống **Báo cáo tuần nội bộ** được xây dựng nhằm giúp c
 
 > **Nhân viên → Trưởng phòng → Giám đốc → Admin**
 
-Hệ thống cho phép nhân viên tạo báo cáo nhiều dòng công việc, thêm/xóa dòng linh hoạt, chọn tuần báo cáo theo mã (`Y25W28`), tự động tính **Từ ngày – Đến ngày**, và phân quyền rõ ràng theo vai trò.
+Hệ thống cho phép nhân viên tạo báo cáo nhiều dòng công việc, thêm/xóa dòng linh hoạt,chỉnh sửa và xem lại báo cáo tuần của mình, chọn tuần báo cáo theo mã (`Y25W28`), tự động tính **Từ ngày – Đến ngày**, và phân quyền rõ ràng theo vai trò.
 
 ---
 
@@ -144,6 +144,41 @@ Hệ thống cho phép nhân viên tạo báo cáo nhiều dòng công việc, t
 
 <img width="345" height="634" alt="image" src="https://github.com/user-attachments/assets/fbd47db1-75d3-42eb-a90c-55f84fb6a8cb" />
 
+
+
+---
+
+## ⚡ Cách cài đặt & khởi chạy dự án
+
+### 1️⃣ Yêu cầu môi trường
+- .NET SDK 8.0 trở lên  
+- SQL Server (local hoặc remote)  
+- Visual Studio 2022 hoặc VS Code  
+- Git (nếu clone từ repo)
+
+---
+
+### 2️⃣ Clone dự án
+```bash
+git clone https://github.com/<tên-repo-của-bạn>.git
+cd BaoCaoTuan
+```
+
+### 3️⃣ Tạo và cập nhật database
+
+Chạy các lệnh sau trong terminal (thư mục gốc dự án):
+
+dotnet ef migrations add InitialCreate
+dotnet ef database update
+
+Khởi chạy ứng dụng
+
+dotnet run
+
+Truy cập:
+👉 https://localhost:5001
+ hoặc http://localhost:5000
+ 
 ---
 
 ## 👤 Tác giả & quản lý hệ thống
